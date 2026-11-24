@@ -1,0 +1,95 @@
+C51 COMPILER V9.54   MAIN                                                                  11/24/2026 21:50:16 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.l
+                    -st) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Delay.h" 
+   3          #include "Timer0.h" 
+   4          
+   5          sbit Buzzer=P2^5;
+   6          
+   7          #define SPEED 500
+   8          
+   9          unsigned int FreqTable[]={
+  10            0,
+  11            63628,63731,63835,63928,64021,64103,64185,64260,64331,64400,64463,64528,
+  12            64580,64633,64684,64732,64777,64820,64860,64898,64934,64968,65000,65030,
+  13            65058,65085,65110,65134,65157,65178,65198,65217,65235,65252,65268,65283,
+  14          };
+  15          
+  16          unsigned char Music[]={
+  17              13,4,
+  18              13,4,
+  19              20,4,
+  20              20,4,
+  21              22,4,
+  22              22,4,
+  23              20,4+4,
+  24              0,4,
+  25              18,4,
+  26              18,4,
+  27              17,4,
+  28              17,4,
+  29              15,4,
+  30              15,4,
+  31              13,4+4,
+  32            
+  33              0xFF
+  34          };
+  35          
+  36          unsigned char FreqSelect,MusicSelect;
+  37          
+  38          void main()
+  39          {
+  40   1        Timer0_Init();
+  41   1        while(1)
+  42   1        {
+  43   2          if(Music[MusicSelect]!=0xFF)
+  44   2          {
+  45   3            FreqSelect=Music[MusicSelect];
+  46   3            MusicSelect++;
+  47   3            Delay(SPEED/4*Music[MusicSelect]);
+  48   3            MusicSelect++;
+  49   3            TR0=0;
+  50   3            Delay(5);
+  51   3            TR0=1;
+  52   3          }
+  53   2          else
+  54   2          {
+C51 COMPILER V9.54   MAIN                                                                  11/24/2026 21:50:16 PAGE 2   
+
+  55   3            TR0=0;
+  56   3            while(1);
+  57   3          }
+  58   2        }
+  59   1      
+  60   1      }
+  61          void Timer0_Routine() interrupt 1
+  62          { 
+  63   1        if(FreqTable[FreqSelect])
+  64   1        {
+  65   2          TL0 = FreqTable[FreqSelect]%256; //重新赋初值
+  66   2          TH0 = FreqTable[FreqSelect]/256; //重新赋初值
+  67   2          Buzzer=!Buzzer;
+  68   2        }
+  69   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    104    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =    107    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
